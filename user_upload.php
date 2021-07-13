@@ -8,7 +8,11 @@
  * @since 2021-07-13
  *  
  */
+namespace Catalyst;
 
+include 'OptionsHandler.php';
+use Catalyst\OptionsHandler;
 
+OptionsHandler::handleOptions();
 
 ?>

@@ -6,18 +6,21 @@ namespace Catalyst;
 
 include 'MYSQLInfo.php';
 include 'HelpPrinter.php';
+include 'CSVFileHandler.php';
 use Catalyst\MYSQLInfo;
 use Catalyst\HelpPrinter;
+use Catalyst\CSVFileHandler;
 
 class OptionsHandler{
 
+    //WARNING: The order does matter as getOption will based on the order to create the array. file should be processed before create_table and dry_run
     public const SHORTOPT ='u:p:h:';      //Accept short option -u, -p, -h
     
     public const LONGOPT = [
                         'file:',        //Accept long option --file, --create_table, --dry_run, --help 
                         'create_table',
                         'dry_run',
-                        'help'
+                        'help',
                     ];
 
     /**
@@ -42,6 +45,7 @@ class OptionsHandler{
                     MYSQLInfo::setHostName($value);
                     break;    
                 case 'file':
+                    (new CSVFileHandler())->processFileFromPath($value,true);
                     break;
                 case 'create_table':
                     break;

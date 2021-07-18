@@ -42,7 +42,7 @@ class OptionsHandler{
                     MYSQLInfo::setPassword($value);
                     break;
                 case 'h':
-                    MYSQLInfo::setHostName($value);
+                    MYSQLInfo::setServerName($value);
                     break;    
                 case 'file':
                     (new CSVFileHandler())->processFileFromPath($value,true);

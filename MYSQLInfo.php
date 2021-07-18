@@ -49,18 +49,18 @@ class MYSQLInfo{
         if(file_exists(self::PATH))
         {
             $array = file(self::PATH);
-            setUserName($array[0]);
-            setPassword($array[1]);
-            setServerName($array[2]);
+            self::setUserName($array[0]);
+            self::setPassword($array[1]);
+            self::setServerName($array[2]);
         }
     }
 
     public static function writeToFile()
     {
         $file = fopen(self::PATH,"w");
-        fwrite($file,$this->getUserName());
-        fwrite($file,$this->getPassword());
-        fwrite($file,$this->getServerName());
+        fwrite($file,self::getUserName());
+        fwrite($file,self::getPassword());
+        fwrite($file,self::getServerName());
     }
 
 }

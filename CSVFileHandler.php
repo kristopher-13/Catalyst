@@ -2,6 +2,9 @@
 
 namespace Catalyst;
 
+include('LineProcessor.php');
+use Cataylst\LineProcessor;
+
 /**
  *  CSVFileHandler - implement FileHandler, to handle the CSVfile line by line. Each line will be processed by the processor.
  */
@@ -19,7 +22,7 @@ class CSVFileHandler{
     public function processFileFromPath($path,$skipHeader = false)
     {
         $file = fopen($path,'r+') or die('Error: Cannot open ' . $path);
-        self::processFileByLine($file,$skipHeader);
+        $this->processFileByLine($file,$skipHeader);
     }
 
     /**

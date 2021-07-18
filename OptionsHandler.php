@@ -5,7 +5,9 @@
 namespace Catalyst;
 
 include 'MYSQLInfo.php';
+include 'HelpPrinter.php';
 use Catalyst\MYSQLInfo;
+use Catalyst\HelpPrinter;
 
 class OptionsHandler{
 
@@ -46,12 +48,13 @@ class OptionsHandler{
                 case 'dry_run':
                     break; 
                 case 'help':
+                    HelpPrinter::printHelp();
                     break;
                 default:
                     die('Error: Unexpected option');        //Supposedly there will be no any other options captured
                     break;         
             }
-            var_dump(MYSQLInfo::$infoArray);
+            //var_dump(MYSQLInfo::$infoArray);
         }
     }
 

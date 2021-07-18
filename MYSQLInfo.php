@@ -2,6 +2,15 @@
 
 namespace Catalyst;
 
+/*
+ * A class to manage the login info to MYSQL database
+ * 
+ * By making use of readFromFile function, writeToFile function and all 'get' functions, 
+ * it is possible:
+ *      1. print the info if there is input
+ *      2. user doesnt need to enter the credential every single time
+ * However, as it is not specified in the requirement, those functions are not used at the moment
+ */
 class MYSQLInfo{
 
     private const PATH = 'MYSQLInfo.txt';

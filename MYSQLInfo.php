@@ -32,15 +32,15 @@ class MYSQLInfo{
         return self::$infoArray['password'];
     }
 
-    public static function setServerName($serverName){
+    public static function setServerName(String $serverName){
         self::$infoArray['serverName'] = $serverName;
     }
 
-    public static function setUserName($userName){
+    public static function setUserName(String $userName){
         self::$infoArray['userName'] = $userName;
     }
 
-    public static function setPassword($password){
+    public static function setPassword(String $password){
         self::$infoArray['password'] = $password;
     }
 

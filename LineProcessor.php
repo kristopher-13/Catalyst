@@ -4,7 +4,7 @@ namespace Cataylst;
 
 interface LineProcessor{
   
-    public function process();
+    public function processArray(array $array);
 
 }
 

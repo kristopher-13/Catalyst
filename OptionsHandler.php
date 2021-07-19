@@ -7,6 +7,9 @@ namespace Catalyst;
 include 'MYSQLInfo.php';
 include 'HelpPrinter.php';
 include 'CSVFileHandler.php';
+include('CatalystLineProcessor.php');
+
+use Cataylst\CatalystLineProcessor;
 use Catalyst\MYSQLInfo;
 use Catalyst\HelpPrinter;
 use Catalyst\CSVFileHandler;
@@ -45,7 +48,7 @@ class OptionsHandler{
                     MYSQLInfo::setServerName($value);
                     break;    
                 case 'file':
-                    (new CSVFileHandler())->processFileFromPath($value,true);
+                    (new CSVFileHandler())->processFileFromPath($value, true, (new CatalystLineProcessor()));
                     break;
                 case 'create_table':
                     break;

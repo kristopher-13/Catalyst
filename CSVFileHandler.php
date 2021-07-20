@@ -9,24 +9,45 @@ use Cataylst\LineProcessor;
  */
 class CSVFileHandler{
 
-    /*public function __construct($processor) {
-        $this->processor = $processor;
-    }*/
-
+    private string $path;
+    private array $header;
+    private bool $hasHader = false;
+    
     /**
-     * @param $path, the path of the file to be processed
+     * To extract some meta-data from the file
      */
-    public function processFileFromPath($path, $skipHeader = false, LineProcessor $processor)
+    public function load(string $path,bool $hasHeader)
     {
-        $file = fopen($path,'r+') or die('Error: Cannot open ' . $path);
-        $this->processFileByLine($file,$skipHeader, $processor);
+        $this->path = $path;
+        if($hasHeader)
+        {
+            $this->hasHeader = $hasHeader;
+            $this->header = $this->getHeader();
+        }
     }
 
     /**
-     * @param $file, the file to be processed
+     * If a file is loaded
      */
-    public function processFileByLine($file, bool $skipHeader = false, LineProcessor $processor)
+    public function loaded():bool{
+        
+        if(isset($this->path) and $this->path != '')
+        {
+            return true;
+        }else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * @param $skipHeader, determine if the header should be processed
+     * @param $processor, an object to process the line
+     */
+    public function processFileByLine(bool $skipHeader = false, LineProcessor $processor)
     {
+        $file = fopen($this->path,'r+') or die('Error: Cannot open ' . $this->path);
+
         if($skipHeader)
         {
             fgets($file);   //skip Header
@@ -38,8 +59,19 @@ class CSVFileHandler{
                 //vardump($array);
                 $processor->processArray($array);
             }
-            
         }
+        fclose($file);
+    }
+
+    /**
+     * Extract header(first line) from the file
+     */
+    public function getHeader():array
+    {
+        $file = fopen($this->path,'r+') or die('Error: Cannot open ' . $this->path);
+        $array = fgetcsv($file);
+        fclose($file);
+        return $array;
     }
 }
 

@@ -13,55 +13,70 @@ namespace Catalyst;
  */
 class MYSQLInfo{
 
-    private const PATH = 'MYSQLInfo.txt';
-    public static $infoArray = [
+    //private $path = 'MYSQLInfo.txt';
+    private $infoArray = [
         'userName' => '',
         'password' => '',
         'serverName' => '',
     ];
 
-    public static function getServerName() : String {
-        return self::$infoArray['serverName'];
-    }
-
-    public static function getUserName() : String {
-        return self::$infoArray['userName'];
-    }
-
-    public static function getPassword() : String{
-        return self::$infoArray['password'];
-    }
-
-    public static function setServerName(String $serverName){
-        self::$infoArray['serverName'] = $serverName;
-    }
-
-    public static function setUserName(String $userName){
-        self::$infoArray['userName'] = $userName;
-    }
-
-    public static function setPassword(String $password){
-        self::$infoArray['password'] = $password;
-    }
-
-    public static function readFromFile()
+    /**
+     * To determine if credential is all set
+     */
+    public function allSet():bool
     {
-        if(file_exists(self::PATH))
+        if(isset($this->infoArray['serverName']) and isset($this->infoArray['userName']) and isset($this->infoArray['password']))
         {
-            $array = file(self::PATH);
-            self::setUserName($array[0]);
-            self::setPassword($array[1]);
-            self::setServerName($array[2]);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * Bunch of getter setter
+     */
+    public function getServerName() : String {
+        return $this->infoArray['serverName'];
+    }
+
+    public function getUserName() : String {
+        return $this->infoArray['userName'];
+    }
+
+    public function getPassword() : String{
+        return $this->infoArray['password'];
+    }
+
+    public function setServerName(String $serverName){
+        $this->infoArray['serverName'] = $serverName;
+    }
+
+    public function setUserName(String $userName){
+        $this->infoArray['userName'] = $userName;
+    }
+
+    public function setPassword(String $password){
+        $this->infoArray['password'] = $password;
+    }
+
+    /*public function readFromFile()
+    {
+        if(file_exists($this->PATH))
+        {
+            $array = file($this->PATH);
+            $this->setUserName($array[0]);
+            $this->setPassword($array[1]);
+            $this->setServerName($array[2]);
         }
     }
 
-    public static function writeToFile()
+    public function writeToFile()
     {
-        $file = fopen(self::PATH,"w");
-        fwrite($file,self::getUserName());
-        fwrite($file,self::getPassword());
-        fwrite($file,self::getServerName());
-    }
+        $file = fopen($this->PATH,"w");
+        fwrite($file,$this->getUserName());
+        fwrite($file,$this->getPassword());
+        fwrite($file,$this->getServerName());
+    }*/
 
 }
 

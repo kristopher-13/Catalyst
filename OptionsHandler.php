@@ -4,10 +4,10 @@
  */
 namespace Catalyst;
 
-include 'MYSQLInfo.php';
-include 'HelpPrinter.php';
-include 'CSVFileHandler.php';
-include('CatalystLineProcessor.php');
+include_once('MYSQLInfo.php');
+include_once('HelpPrinter.php');
+include_once('CSVFileHandler.php');
+include_once('CatalystLineProcessor.php');
 
 use Cataylst\CatalystLineProcessor;
 use Catalyst\MYSQLInfo;
@@ -33,26 +33,44 @@ class OptionsHandler{
     {
         $options = getopt(self::SHORTOPT,self::LONGOPT);  //Get Option
 
-        //var_dump($options);
+        //Initalize
+        $CSVFileHandler = new CSVFileHandler();
+        $MYSQLHandler = new MYSQLHandler();
+        $MYSQLInfo = new MYSQLInfo();
+
+        $action = '';
+     
         foreach($options as $key => $value)     //handle each options
         {
             switch($key)
             {   
                 case 'u':
-                    MYSQLInfo::setUserName($value);
+                    $MYSQLInfo->setUserName($value);
                     break;
                 case 'p':
-                    MYSQLInfo::setPassword($value);
+                    $MYSQLInfo->setPassword($value);
                     break;
                 case 'h':
-                    MYSQLInfo::setServerName($value);
+                    $MYSQLInfo->setServerName($value);
                     break;    
                 case 'file':
-                    (new CSVFileHandler())->processFileFromPath($value, true, (new CatalystLineProcessor()));
+                    $CSVFileHandler->load($value,true);
                     break;
                 case 'create_table':
+                    if($MYSQLInfo->allSet())
+                    {
+                        $MYSQLHandler->setMYSQLInfo($MYSQLInfo);
+                        if($CSVFileHandler->loaded() and $MYSQLHandler->hasMYSQLInfo())
+                        {
+                            $MYSQLHandler->createTableFromArray('users',$CSVFileHandler->getHeader(),true);
+                        }
+                    }                    
                     break;
                 case 'dry_run':
+                    if($CSVFileHandler->loaded())
+                        {
+                            $CSVFileHandler->processFileByLine(true,(new CatalystLineProcessor($MYSQLHandler)));
+                        }
                     break; 
                 case 'help':
                     HelpPrinter::printHelp();
@@ -61,8 +79,8 @@ class OptionsHandler{
                     die('Error: Unexpected option');        //Supposedly there will be no any other options captured
                     break;         
             }
-            //var_dump(MYSQLInfo::$infoArray);
-        }
+            
+        }//var_dump($options);
     }
 
 }

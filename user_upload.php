@@ -10,7 +10,7 @@
  */
 namespace Catalyst;
 
-include 'OptionsHandler.php';
+include_once 'OptionsHandler.php';
 use Catalyst\OptionsHandler;
 
 OptionsHandler::handleOptions();

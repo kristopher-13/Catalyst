@@ -14,11 +14,7 @@ namespace Catalyst;
 class MYSQLInfo{
 
     //private $path = 'MYSQLInfo.txt';
-    private $infoArray = [
-        'userName' => '',
-        'password' => '',
-        'serverName' => '',
-    ];
+    private $infoArray = [];
 
     /**
      * To determine if credential is all set

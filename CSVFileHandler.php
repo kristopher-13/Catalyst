@@ -10,20 +10,13 @@ use Cataylst\LineProcessor;
 class CSVFileHandler{
 
     private string $path;
-    private array $header;
-    private bool $hasHader = false;
     
     /**
      * To extract some meta-data from the file
      */
-    public function load(string $path,bool $hasHeader)
+    public function load(string $path)
     {
         $this->path = $path;
-        if($hasHeader)
-        {
-            $this->hasHeader = $hasHeader;
-            $this->header = $this->getHeader();
-        }
     }
 
     /**
@@ -45,8 +38,8 @@ class CSVFileHandler{
      * @param $processor, an object to process the line
      */
     public function processFileByLine(bool $skipHeader = false, LineProcessor $processor)
-    {
-        $file = fopen($this->path,'r+') or die('Error: Cannot open ' . $this->path);
+    {   
+        $file = fopen($this->path,'r+') or die('Error: Cannot open ' . $this->path);    //if the file cannot be opened, nothing can be done
 
         if($skipHeader)
         {
@@ -60,6 +53,7 @@ class CSVFileHandler{
                 $processor->processArray($array);
             }
         }
+        print('File has been processed'. PHP_EOL);
         fclose($file);
     }
 
@@ -69,7 +63,7 @@ class CSVFileHandler{
     public function getHeader():array
     {
         $file = fopen($this->path,'r+') or die('Error: Cannot open ' . $this->path);
-        $array = fgetcsv($file);
+        $array = fgetcsv($file);    //first line and convert it into array
         fclose($file);
         return $array;
     }

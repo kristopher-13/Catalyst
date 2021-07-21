@@ -2,7 +2,9 @@
 namespace Catalyst;
 
 include_once('MySQLInfo.php');
+
 use mysqli;
+use \Exception;
 use Catalyst\MYSQLInfo;
 
 /**
@@ -29,17 +31,47 @@ class MYSQLHandler{
             return false;
         }
     }
+
+    /**
+     * Create database
+     */
+    public function createDB(string $dbName, mysqli $conn = null){ 
+        try{
+            if(!isset($conn))
+            {
+                $conn = $this->getConnection();
+            }
+            if(mysqli_query($conn,'CREATE DATABASE IF NOT EXISTS '. $dbName .';'))
+            {
+
+            }else
+            {
+                throw new Exception('Error: Database' . $dbName .' cannot be created'); 
+            }
+            if(!isset($conn))
+            {
+                mysqli_close($conn);
+            } 
+        }catch(Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+
     /**
      * Connect to the database using MYSQLInfo
      * 
      * @return mysqli
      */
     public function getConnection() : mysqli {  
-        $conn = mysqli_connect($this->MYSQLInfo->getServerName(), $this->MYSQLInfo->getUserName(), $this->MYSQLInfo->getPassword());
-        if (!$conn) {
-            die("Error: " . mysqli_connect_error());
-        }else{
-            return $conn;
+        try{
+            $conn = mysqli_connect($this->MYSQLInfo->getServerName(), $this->MYSQLInfo->getUserName(), $this->MYSQLInfo->getPassword());
+            if (!$conn) {
+                throw new Exception("Error: " . mysqli_connect_error());
+            }else{
+                return $conn;
+            }
+        }catch(Exception $e) {
+            echo $e->getMessage();
         }
     }
 
@@ -50,23 +82,45 @@ class MYSQLHandler{
      * @param $array - array of header name
      * @param $replace - determine if the existing table to be replaced
      */
-    public function createTableFromArray(String $tableName,array $array, bool $replace)
+    public function createTableFromArray(string $dbName, string $tableName,array $fieldDef, bool $replace)
     {   
+        
         $conn = $this->getConnection();
-
-        if($replace)
+        
+        $this->createDB($dbName, $conn);   //create database if not exist
+        
+        mysqli_select_db($conn, $dbName);   //use database
+        
+        if($replace)    //remove existing table if replace = true
         {
             $sql = 'TRUNCATE ' . $tableName;
-            mysqli_query($this->conn, $sql);
+            mysqli_query($conn, $sql);
         }
 
         $sql = 'CREATE TABLE '. $tableName . '(';
-        foreach($array as $fieldName => $option)
+
+        $first = true;
+        foreach($fieldDef as $fieldName => $option) //loop though all the fields with its option
         {
-            $sql = $sql . $tableName . ' '. $option . ',';
+            if(!$first)
+            {
+                $sql .= ',';
+            }else
+            {
+                $first = false;
+            }
+
+            $sql = $sql . $fieldName . ' '. $option;
         }
         $sql = $sql . ');';
-        mysqli_query($this->$conn, $sql);
+
+        if(mysqli_query($conn, $sql))
+        {
+            print('Table ' . $tableName . ' has been created successfully' . PHP_EOL);
+        }else
+        {
+            throw new Exception('Error: SQL '. $sql .' run failed');   
+        } 
         mysqli_close($conn);
     }
 
@@ -77,25 +131,39 @@ class MYSQLHandler{
      * @param $array - array of data
      * @param $header - array of header name
      */
-    public function InsertRecordFromArray(String $tableName,array $array,array $header)
+    public function InsertRecordFromArray(string $dbName, string $tableName,array $array,array $header)
     {
         $conn = $this->getConnection();
 
-        if(sizeof($array) == sizeof($header))
-        {
-            if(mysqli_query($conn,'Select 1 From '. $tableName . ' LIMIT 1'))   //if table exist
+        $this->createDB($dbName, $conn);   //create databas if not exist
+
+        mysqli_select_db($conn, $dbName);     //use database
+        try{ 
+            if(sizeof($array) == sizeof($header))
             {
-                $sql = 'INSERT INTO '. $tableName . '(' . implode(',',$header) . ')VALUES(' . implode(',',$array) . ')';
-                mysqli_query($this->$conn, $sql);
-                mysqli_close($conn);
-            }else
-            {
-                print('Error: Table doesnt exist, No record is inserted in the database');
+                if(mysqli_query($conn,'Select 1 From '. $tableName . ' LIMIT 1'))   //if table exist
+                {
+                    $sql = 'INSERT INTO '. $tableName . '(' . implode(',',$header) . ')VALUES(' . implode(',',$array) . ')';
+                    if(mysqli_query($conn, $sql))
+                    {
+                        'Record has been inserted successfully';
+                    }else
+                    {
+                        throw new Exception('Error: SQL '. $sql .' run failed');
+                    }
+
+                    mysqli_close($conn);
+                }else
+                {
+                    throw new Exception('Error: Table doesnt exist, No record is inserted in the database');
+                }
             }
-        }
-        else
-        {
-            print('Error: Number of header is not the same as number of field');
+            else
+            {
+                throw new Exception('Error: Number of header is not the same as number of field');
+            }
+        }catch(Exception $e) {
+            echo $e->getMessage();
         }
 
         
